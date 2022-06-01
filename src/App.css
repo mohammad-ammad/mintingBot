@@ -1,38 +1,138 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Luckiest+Guy&family=Montserrat:wght@700&family=Nosifer&family=Oswald:wght@400;600&family=Roboto:wght@100;300&family=Rubik+Glitch&display=swap');
+body{
+   margin: 0;
+}
+*{
+    box-sizing: border-box;
+
+}
+.main{
+    margin: 0;
+    justify-content: center;
+    height: 45rem;
+    background-color: blueviolet; /* For browsers that do not support gradients */
+    background-image: linear-gradient(170deg, blueviolet 0%, blueviolet 60%, white 60.1%);
+
+}
+.rightimage{
+    width: 50%;
+    height: 70%;
+    display: flex;
+    float: right;
+    margin: 2% 10px 0px 0px;
+}
+.rightimage img{
+    margin-left: 15%;
+    border: 2px solid white;
+
+}
+.lefttext{
+    width: 40%;
+    height: 70%;
+    justify-content: center;
+    display:flex;
+    float: left ;   
+    margin: 2% 0px 0px 5%;
+    text-align: center;
+    overflow: hidden;
+}
+.lefttext .textwrap{
+    margin: 25% 10px 0px 0px;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+.lefttext .textwrap h1{
+    width: 100%;
+    overflow-wrap: break-word;
+    font-size: 50px;
+    font-family: 'Nosifer', cursive;
+    padding: 0;
+    color: white;
+    justify-content: center;
+    text-align: center;
+    margin: 0 ;
+}
+.lefttext .textwrap p{
+    margin: 0px 20px 0px 20px;
+    font-size: 20px;
+    font-family: 'Oswald', cursive;
+    padding: 0;
+    color: whitesmoke;
+    justify-content: center;
+    text-align: center;
+}
+.lefttext .textwrap button{
+    font-size: 30px;
+    margin-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 0;
+    border-radius: 5px;
+    background-color: skyblue;
+    font-family: 'Oswald', cursive;
+    justify-content: center;
+    text-align: center;
+}
+.lefttext .textwrap button:hover{
+    color: rgb(255, 12, 126);
+    background-color: #F7DBF0;
+    border: 2px solid black;
+}
+#navicon{
+    margin-left: 100px;
+    font-size: 20px;
+}
+.aboutus .leftaboutus{
+    text-align: center;
+    float: left;
+}
+
+@media screen and (max-width: 600px) {
+    .lefttext{
+
+        padding: 0;
+        display: flex;
+        width: 100%;
+        margin-top: -10%;
+    }
+    .rightimage{
+        display: flex;
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
+
+.bx__wrapper 
+{
+  margin: 1vmax 25vmax;
+  padding: 3vmax 2vmax;
+  border: 2px solid #8A2BE2;
+  border-radius: 0.7vmax;
+  
+}
+
+/* linear-gradient(to right, #DD5E89 0%, #F7BB97  51%, #DD5E89  100%);; */
+
+.btn-grad {
+  background-image: linear-gradient(to right, #8A2BE2 0%, rgb(255, 12, 126)  51%, #8A2BE2  100%);
+  margin: 10px;
+  padding: 15px 45px;
   text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  display: block;
+  border: none !important;
+  outline: none !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btn-grad:hover {
+  background-position: right center; /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
 }
