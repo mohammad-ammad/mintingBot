@@ -136,3 +136,223 @@ body{
   color: #fff;
   text-decoration: none;
 }
+
+
+/* custom  */
+.main_wrapper 
+{
+    height: 45rem;
+    background-color: blueviolet; /* For browsers that do not support gradients */
+    background-image: linear-gradient(170deg, blueviolet 0%, blueviolet 60%, white 60.1%);
+}
+
+.main_wrapper > .nav 
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1vmax;
+}
+
+.main_wrapper > .nav > .left > h1
+{
+    font-family: 'Oswald', cursive;
+    color: #eee;
+}
+
+.main_wrapper > .nav > .right > button 
+{
+    font-size: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 0;
+    border-radius: 5px;
+    background-color: skyblue;
+    font-family: 'Oswald', cursive;
+    justify-content: center;
+    text-align: center;
+}
+
+.main_wrapper > .hero 
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2vmax;
+}
+
+.main_wrapper > .hero > .left > h1
+{
+    font-family: 'Nosifer', cursive;
+    color: #eee;
+}
+
+.main_wrapper > .hero > .left > p 
+{
+    font-family: 'Oswald', cursive;
+    color: whitesmoke;
+    
+}
+
+.main_wrapper > .hero > .right > img 
+{
+    width: 500px;
+    height: auto;
+    border: 2px solid white;
+}
+
+.collection_wrapper 
+{
+    padding: 2vmax 10vmax;
+}
+
+.collection_wrapper > div > h1 
+{
+    font-family: 'Nosifer', cursive;
+    text-align: center;
+    color: #8A2BE2;
+    margin-bottom: 1vmax;
+}
+.sub__drop 
+{
+    background-color: #E6E4E4;
+    margin-top: 0.3vmax;
+    padding: 0.4vmax;
+}
+
+.sub__drop > div 
+{
+    cursor: pointer;
+    
+}
+@media screen and (max-width: 830px) {
+    .main_wrapper 
+    {
+        height: 35rem;
+    }
+    .main_wrapper > .hero 
+    {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .main_wrapper > .hero > .right > img 
+    {
+        width: 200px;
+        height: auto;
+    }
+    .bx__wrapper 
+    {
+    margin: 1vmax 2vmax;
+    padding: 3vmax 2vmax;
+    border: 2px solid #8A2BE2;
+    border-radius: 0.7vmax;
+    }
+}
+
+.table-wrapper{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.fl-table {
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    white-space: nowrap;
+    background-color: white;
+}
+
+.fl-table td, .fl-table th {
+    text-align: center;
+    padding: 8px;
+}
+
+.fl-table td {
+    border-right: 1px solid #f8f8f8;
+    font-size: 12px;
+}
+
+.fl-table thead th {
+    color: #ffffff;
+    background: skyblue;
+}
+
+
+.fl-table thead th:nth-child(odd) {
+    color: #ffffff;
+    background: #8A2BE2;
+}
+
+.fl-table tr:nth-child(even) {
+    background: #F8F8F8;
+}
+
+/* Responsive */
+
+@media (max-width: 767px) {
+    .fl-table {
+        display: block;
+        width: 100%;
+    }
+    .table-wrapper:before{
+        content: "Scroll horizontally >";
+        display: block;
+        text-align: right;
+        font-size: 11px;
+        color: white;
+        padding: 0 0 10px;
+    }
+    .fl-table thead, .fl-table tbody, .fl-table thead th {
+        display: block;
+    }
+    .fl-table thead th:last-child{
+        border-bottom: none;
+    }
+    .fl-table thead {
+        float: left;
+    }
+    .fl-table tbody {
+        width: auto;
+        position: relative;
+        overflow-x: auto;
+    }
+    .fl-table td, .fl-table th {
+        padding: 20px .625em .625em .625em;
+        height: 60px;
+        vertical-align: middle;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 120px;
+        font-size: 13px;
+        text-overflow: ellipsis;
+    }
+    .fl-table thead th {
+        text-align: left;
+        border-bottom: 1px solid #f7f7f9;
+    }
+    .fl-table tbody tr {
+        display: table-cell;
+    }
+    .fl-table tbody tr:nth-child(odd) {
+        background: none;
+    }
+    .fl-table tr:nth-child(even) {
+        background: transparent;
+    }
+    .fl-table tr td:nth-child(odd) {
+        background: #F8F8F8;
+        border-right: 1px solid #E6E4E4;
+    }
+    .fl-table tr td:nth-child(even) {
+        border-right: 1px solid #E6E4E4;
+    }
+    .fl-table tbody td {
+        display: block;
+        text-align: center;
+    }
+}
