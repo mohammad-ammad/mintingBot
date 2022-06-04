@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import utils from './utils.json';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 // 0xbDE6301e1177AEAf6B0E6975e5f68e55ec138027
 const Mint = () => {
     const [address, setAddress] = useState("");
@@ -11,6 +12,11 @@ const Mint = () => {
     const [Fields, setfields] = useState([]);
     const [contract, setContract] = useState([]);
     const [change, setChange] = useState(false);
+    const [onfocus, setOnFocus] = useState(false);
+    const [gas, setGas] = useState("");
+    const [cat, setCat] = useState([]);
+
+    const collective = useSelector(state => state.collectiveReducer);
 
     const submitHandler = async () => 
     {
@@ -21,7 +27,7 @@ const Mint = () => {
             let abi = JSON.parse(data.result[0]['ABI']);
 
             for(let item of abi) {
-                console.log(item.name)
+                setCat(cat => [...cat, item.name])
                 if(item.name == 'mint')
                 {
                     setIslabel(item.inputs)
@@ -76,19 +82,80 @@ const Mint = () => {
         try {
            if(values.length === 1)
            {
-            const res = await contract.mint(Number(values[0]));
-            res.wait();
+               if(gas=="")
+               {
+                const res = await contract.mint(Number(values[0]));
+                res.wait();
+               }
+               else 
+               {
+                const res = await contract.mint(Number(values[0]),{
+                    gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                });
+                res.wait();
+               }
            }
 
            else if(values.length === 2)
            {
-            const res = await contract.mint(values[0],Number(values[1]));
-            res.wait();
+               if(gas == "")
+               {
+                    const res = await contract.mint(values[0],Number(values[1]));
+                    res.wait();
+               }
+               else 
+               {
+                    try {
+                        const res = await contract.mint(values[0],Number(values[1]),{
+                            gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                        });
+                        res.wait();
+                    } catch (error) {
+                        toast.error("Gas limit")
+                    }
+
+                    // let privatekey = '3db9ae06dca0eaa37d8d219b4d5387342298ccc0465598508129ed25c8a62094';
+                    // let wallet = new ethers.Wallet(privatekey);
+
+                    // let transaction = {
+                    //     to: values[0],
+                    //     value: ethers.utils.parseEther('1'),
+                    //     gasLimit: '21000',
+                    //     maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei'),
+                    //     maxFeePerGas: ethers.utils.parseUnits('20', 'gwei'),
+                    //     nonce: 1,
+                    //     type: 2,
+                    //     chainId: 4
+                    // };
+
+                    // let rawTransaction = await wallet.signTransaction(transaction).then(ethers.utils.serializeTransaction(transaction));
+                    // console.log('Raw txhash string ' + rawTransaction);
+
+                    // let gethProxy = await fetch(`https://api-ropsten.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex=${rawTransaction}&apikey=YourApiKeyToken`);    
+                    // let response = await gethProxy.json();    
+                        
+                    // // print the API response
+                    // console.log(response);
+
+                    // console.log(wallet);
+
+               }
            }
            else if (values.length === 3)
            {
-            const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])));
-            res.wait();
+               if(gas== "")
+               {
+                const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])));
+                res.wait();
+               }
+               else 
+               {
+                const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])),{
+                    gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                });
+                res.wait();
+               }
+            
            }
 
         } catch (error) {
@@ -99,6 +166,11 @@ const Mint = () => {
             }
         }
     }
+
+    const onType = () => 
+    {
+        setOnFocus(true)
+    }
   
   return (
     <>
@@ -106,13 +178,21 @@ const Mint = () => {
    <div className='bx_container'>
         <div className='mb-3'>
             <label htmlFor="" class="form-label">Contract Address</label>
-            <input type="text" className='form-control' name="" id="" value={address} onChange={(e) => setAddress(e.target.value)}/>
-           
-            <div className="sub__drop">
-                <div>abc</div>
-                <div>abc</div>
-                <div>abc</div>
-            </div>
+            <input type="text" className='form-control' onClick={onType} name="" id="" value={address} onChange={(e) => setAddress(e.target.value)}/>
+           {
+               collective.length != 0 && onfocus == true? 
+               <div className="sub__drop">
+                {
+                    collective.map((item) => (
+                        <div onClick={()=>setAddress(item)}>{item}</div>
+                    ))
+                }
+              </div>
+            : ''
+           }
+
+
+            
         </div>
         <div class="d-grid gap-2">
             <button type="button" className='btn btn-primary btn-grad' onClick={submitHandler}>{change ? <div class="d-flex justify-content-center">
@@ -121,9 +201,24 @@ const Mint = () => {
   </div>
 </div> : 'Fetch'}</button>
         </div>
+        
         {
             isOption && 
-            <div>
+            <div className='row'>
+                <div className="col-md-6">
+                    <div className="mb-3">
+                        <label htmlFor="">Functions</label>
+                        <select name="" id="" className='form-control'>
+                            <option value="">Choose Function</option>
+                            {
+                                cat ? cat.map((item) => (
+                                    <option value="">{item}</option>
+                                )) : ''
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div className="col-md-6">
                 {
                     islabel ? islabel.map((item) =>(
                        <>
@@ -132,9 +227,19 @@ const Mint = () => {
                             <input type="text" name="" className='form-control' id={item.name} />
                        </div>
                        </>
-                    )) : ''
+                    ))
+                     : ''
                 }
-                <button type="button" className='btn-grad' onClick={mintHandler}>Mint</button>
+                {
+                    islabel ? 
+                    <div className='mb-3'>
+                         <label htmlFor="">Gas Fee (Optional)</label>
+                        <input type="text" name="" id=""  className='form-control' value={gas} onChange={(e)=>setGas(e.target.value)}/>
+                    </div>
+                    : ''
+                }
+                <button type="button" className='btn-grad' onClick={mintHandler}>Pre-Tx</button>
+                </div>
             </div>
         }
     </div>

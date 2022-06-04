@@ -225,6 +225,30 @@ body{
     cursor: pointer;
     
 }
+.show_hide 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1vmax;
+}
+
+.show_hide > button 
+{
+    background-image: linear-gradient(to right, #8A2BE2 0%, rgb(255, 12, 126)  51%, #8A2BE2  100%);
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  display: block;
+  border: none !important;
+  outline: none !important;
+}
 @media screen and (max-width: 830px) {
     .main_wrapper 
     {
@@ -356,3 +380,4 @@ body{
         text-align: center;
     }
 }
+

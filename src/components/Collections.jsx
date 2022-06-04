@@ -1,112 +1,106 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCollections } from '../store/collectionSlice';
+import { add, remove } from '../store/collectiveSlice';
 const Collections = () => {
 
-    const [result, setResult] = useState([]);
-    const [change, setChange] = useState(false);
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        const load_data = async () => 
-        {
-            setChange(true);
-            const {data} = await axios.get(`https://testnets-api.opensea.io/api/v1/collections?format=json&limit=10&offset=0`);
+    const {data : result, status} = useSelector(state => state.collectionReducer);
 
-            setTimeout(myTimer, 5000)
-            
-            function myTimer()
-            {
-                setResult(data.collections);
-                // console.log(result.length)
-            }
-            
-            setChange(false);
-            
-        }
+    const [show, setShow] = useState(false);
 
-        load_data();
-    }, [])
+    // useEffect(() => {
+    //     const load_data = async () => 
+    //     {
+    //         dispatch(fetchCollections())
+    //     }
+
+    //     load_data();
+    // }, [])
 
     const checkHandler = (check,id) => 
     {
         if(check == true && id == 0)
         {
-            localStorage.setItem("option_0",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 0)
         {
-            localStorage.removeItem("option_0")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 1)
         {
-            localStorage.setItem("option_1",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 1)
         {
-            localStorage.removeItem("option_1")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 2)
         {
-            localStorage.setItem("option_2",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 2)
         {
-            localStorage.removeItem("option_2")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 3)
         {
-            localStorage.setItem("option_3",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 3)
         {
-            localStorage.removeItem("option_3")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 4)
         {
-            localStorage.setItem("option_4",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 4)
         {
-            localStorage.removeItem("option_4")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 5)
         {
-            localStorage.setItem("option_5",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 5)
         {
-            localStorage.removeItem("option_5")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 6)
         {
-            localStorage.setItem("option_6",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 6)
         {
-            localStorage.removeItem("option_6")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 7)
         {
-            localStorage.setItem("option_7",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 7)
         {
-            localStorage.removeItem("option_7")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 8)
         {
-            localStorage.setItem("option_8",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 8)
         {
-            localStorage.removeItem("option_8")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         else if(check == true && id == 9)
         {
-            localStorage.setItem("option_9",document.getElementById(`ch_${id}`).value)
+            dispatch(add(document.getElementById(`ch_${id}`).value))
         }
         else if(check == false && id == 9)
         {
-            localStorage.removeItem("option_9")
+            dispatch(remove(document.getElementById(`ch_${id}`).value))
         }
         
     }
@@ -115,43 +109,48 @@ const Collections = () => {
     <div className="collection_wrapper">
         <div>
             <h1>Latest Collection</h1>
+            <div className='show_hide'>
+                {
+                    show == true ? <button onClick={() => setShow(false)}>Hide Collection</button> : 
+                    <button onClick={() => setShow(true)}>Show Collection</button>
+                }
+            </div>
         </div>
         <div>
             <div className="table-wrapper">
                 <table class="fl-table">
                     <thead>
                     <tr>
-                            <th>Add</th>
+                            <th> Add</th>
                             <th>Address</th>
                             <th>Collection Name</th>
                             <th>Token</th>
                     </tr>
                     </thead>
+                    {show == true &&
                     <tbody>
                         {
-                            console.log(result)
-                        }
-                        {
-                            change == true ? 'Loading' : result.length > 0 ? result.map((item,index) => (
+                             status == 'loading' ? 'Loading' : result ? result.map((item,index) => (
                                 <tr key={index}>
                                     <td>
-                                        <input type="checkbox" name="" onClick={(e) => checkHandler(e.target.checked,index)}  id={`ch_${index}`} value={item.primary_asset_contracts[0]['address']} />
+                                        <input type="checkbox" name="" onClick={(e) => checkHandler(e.target.checked,index)}  id={`ch_${index}`} value={item.address} />
                                     </td>
                                     <td>
-                                        <a href={`https://rinkeby.etherscan.io/address/${item.primary_asset_contracts[0]['address']}`} target="_blank">
-                                        {item.primary_asset_contracts[0]['address']}
+                                        <a href={`https://rinkeby.etherscan.io/address/${item.address}`} target="_blank">
+                                        {item.address}
                                         </a>
                                     </td>
                                     <td>
-                                    {item.primary_asset_contracts[0]['name']}
+                                    {item.name}
                                     </td>
                                     <td>
-                                    {item.primary_asset_contracts[0]['schema_name']}
+                                    {item.schema_name}
                                     </td>
                                 </tr>
                             )) : 'No Collections Found'
                         }
                     </tbody>
+                    }
                 </table>
             </div>
         </div>
