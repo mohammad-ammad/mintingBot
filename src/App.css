@@ -141,7 +141,7 @@ body{
 /* custom  */
 .main_wrapper 
 {
-    height: 45rem;
+    height: 40rem;
     background-color: blueviolet; /* For browsers that do not support gradients */
     background-image: linear-gradient(170deg, blueviolet 0%, blueviolet 60%, white 60.1%);
 }
@@ -176,15 +176,46 @@ body{
 .main_wrapper > .hero 
 {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
     padding: 2vmax;
+}
+
+.no_active_wrapper 
+{
+    font-family: 'Nosifer', cursive;
+    color: #8A2BE2;
+    text-align: center; 
+    font-size: 1.6vmax;
+    margin-bottom: 3vmax;
 }
 
 .main_wrapper > .hero > .left > h1
 {
     font-family: 'Nosifer', cursive;
     color: #eee;
+}
+
+.footer
+{
+    background-color: #8A2BE2;
+    padding: 0.5vmax 2vmax;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* margin-top: 5vmax; */
+}
+
+.footer > div > p 
+{
+    color: #eee;
+    margin-top: 1vmax;
+}
+
+.footer > div > a 
+{
+    color: #eee;
+    margin-right: 0.5vmax;
 }
 
 .main_wrapper > .hero > .left > p 
@@ -198,7 +229,7 @@ body{
 {
     width: 500px;
     height: auto;
-    border: 2px solid white;
+    /* border: 2px solid white; */
 }
 
 .collection_wrapper 
@@ -249,6 +280,23 @@ body{
   border: none !important;
   outline: none !important;
 }
+
+label 
+{
+    font-size: 1vmax;
+}
+
+.tx_input 
+{
+    width: 350px !important;
+}
+
+.banner_bx
+{
+    width: 100%;
+    height: auto;
+}
+
 @media screen and (max-width: 830px) {
     .main_wrapper 
     {
@@ -271,6 +319,10 @@ body{
     padding: 3vmax 2vmax;
     border: 2px solid #8A2BE2;
     border-radius: 0.7vmax;
+    }
+    .tx_input 
+    {
+        width: 100% !important;
     }
 }
 

@@ -118,6 +118,7 @@ const Collections = () => {
         </div>
         <div>
             <div className="table-wrapper">
+            {show == true &&
                 <table class="fl-table">
                     <thead>
                     <tr>
@@ -127,7 +128,7 @@ const Collections = () => {
                             <th>Token</th>
                     </tr>
                     </thead>
-                    {show == true &&
+                    
                     <tbody>
                         {
                              status == 'loading' ? 'Loading' : result ? result.map((item,index) => (
@@ -150,8 +151,9 @@ const Collections = () => {
                             )) : 'No Collections Found'
                         }
                     </tbody>
-                    }
+                    
                 </table>
+                }
             </div>
         </div>
     </div>

@@ -8,21 +8,37 @@ import { ToastContainer} from 'react-toastify';
 import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Collections from './components/Collections';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {fetchCollections} from '../src/store/collectionSlice'
+import axios from 'axios';
+import NoActive from './components/NoActive';
+import Footer from './components/Footer';
+import Banner from './components/Banner';
 function App() {
   const dispatch = useDispatch();
+
+  const {isActive} = useSelector(state => state.connectReducer);
 
   useEffect(() => {
     dispatch(fetchCollections())
   }, [])
 
+  
+
   return (
     <>
     <ToastContainer />
     <Navbar/>
-    <Collections/>
-    <Mint/>
+    {
+      isActive == true ?
+     <>
+      <Collections/>
+      <Mint/>
+     </>
+       : <NoActive/>
+    }
+    <Banner/>
+    <Footer/>
     </>
   );
 }

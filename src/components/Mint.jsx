@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 // 0xbDE6301e1177AEAf6B0E6975e5f68e55ec138027
+// 0xc1f15B359Deb637324e9198e42E2ebAEdD29cd01
 const Mint = () => {
     const [address, setAddress] = useState("");
     const [isOption, setIsOption] = useState(false);
@@ -15,8 +16,38 @@ const Mint = () => {
     const [onfocus, setOnFocus] = useState(false);
     const [gas, setGas] = useState("");
     const [cat, setCat] = useState([]);
+    const [priority, setPriority] = useState("");
+    const [maxFee, setMaxFee] = useState("");
+    const [getEstimation, setGetEstimation] = useState(false);
 
     const collective = useSelector(state => state.collectiveReducer);
+    const {account} = useSelector(state => state.connectReducer);
+
+    useEffect(() => {
+        const limit = async () => 
+        {
+            try {
+                const {data} = await axios.get(`https://api.etherscan.io/api?module=proxy&action=eth_estimateGas&to=${account}&apikey=SUTT68WDXUAYFWXMWXKJH39K122D6FWYVJ`);
+                console.log(data) 
+                if(getEstimation == true)
+                {
+                    let num = parseInt(data.result,16)
+                    setPriority(num);
+                    setMaxFee(num);
+                    
+                }
+                else 
+                {
+                    setPriority("");
+                    setMaxFee("");
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        limit()
+    }, [getEstimation])
 
     const submitHandler = async () => 
     {
@@ -100,45 +131,56 @@ const Mint = () => {
            {
                if(gas == "")
                {
+                
+                    if(maxFee != "" && priority != "")
+                   {
+                    try {
+                        const res = await contract.mint(values[0],Number(values[1]),{
+                            maxFeePerGas: ethers.utils.parseUnits(maxFee.toString(), "wei"),
+                            maxPriorityFeePerGas: ethers.utils.parseUnits(priority.toString(), "wei"),
+                            gasLimit: 2000000,
+                        });
+                        res.wait();
+                    } catch (error) {
+                        console.log(error)
+                        toast.error("Gas limit")
+                    }
+                   }
+                   else 
+                   {
                     const res = await contract.mint(values[0],Number(values[1]));
                     res.wait();
+                   }
                }
                else 
                {
+                   if(maxFee != "" && priority != "")
+                   {
                     try {
                         const res = await contract.mint(values[0],Number(values[1]),{
-                            gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                            maxFeePerGas: ethers.utils.parseUnits(maxFee, "gwei"),
+                            maxPriorityFeePerGas: ethers.utils.parseUnits(priority, "gwei"),
+                            // gasLimit: 2000000,
                         });
                         res.wait();
                     } catch (error) {
                         toast.error("Gas limit")
                     }
+                   }
+                   else 
+                   {
+                        try {
+                            const res = await contract.mint(values[0],Number(values[1]),{
+                                gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                            });
+                            res.wait();
+                        } catch (error) {
+                            toast.error("Gas limit")
+                        }
+                   }
+                    
 
-                    // let privatekey = '3db9ae06dca0eaa37d8d219b4d5387342298ccc0465598508129ed25c8a62094';
-                    // let wallet = new ethers.Wallet(privatekey);
-
-                    // let transaction = {
-                    //     to: values[0],
-                    //     value: ethers.utils.parseEther('1'),
-                    //     gasLimit: '21000',
-                    //     maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei'),
-                    //     maxFeePerGas: ethers.utils.parseUnits('20', 'gwei'),
-                    //     nonce: 1,
-                    //     type: 2,
-                    //     chainId: 4
-                    // };
-
-                    // let rawTransaction = await wallet.signTransaction(transaction).then(ethers.utils.serializeTransaction(transaction));
-                    // console.log('Raw txhash string ' + rawTransaction);
-
-                    // let gethProxy = await fetch(`https://api-ropsten.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex=${rawTransaction}&apikey=YourApiKeyToken`);    
-                    // let response = await gethProxy.json();    
-                        
-                    // // print the API response
-                    // console.log(response);
-
-                    // console.log(wallet);
-
+                    
                }
            }
            else if (values.length === 3)
@@ -152,6 +194,8 @@ const Mint = () => {
                {
                 const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])),{
                     gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                    maxFeePerGas: ethers.utils.parseUnits(maxFee, "gwei"),
+                    maxPriorityFeePerGas: ethers.utils.parseUnits(priority, "gwei")
                 });
                 res.wait();
                }
@@ -200,48 +244,61 @@ const Mint = () => {
     <span class="visually-hidden">Loading...</span>
   </div>
 </div> : 'Fetch'}</button>
+<div className='d-flex justify-content-start align-items-center'>
+    <input type="checkbox" name="" id="" className='me-2' onChange={() => setGetEstimation(!getEstimation)}/>
+    Get Estimation
+</div>
         </div>
         
         {
             isOption && 
             <div className='row'>
-                <div className="col-md-6">
-                    <div className="mb-3">
-                        <label htmlFor="">Functions</label>
-                        <select name="" id="" className='form-control'>
-                            <option value="">Choose Function</option>
-                            {
-                                cat ? cat.map((item) => (
-                                    <option value="">{item}</option>
-                                )) : ''
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div className="col-md-6">
+                <div className="col-md-12">
                 {
                     islabel ? islabel.map((item) =>(
                        <>
-                       <div className="mb-3">
+                       <div className="mb-3 d-flex justify-content-between align-items-center">
+                            <div>
                             <label htmlFor="">{item.name} ({item.type})</label> 
-                            <input type="text" name="" className='form-control' id={item.name} />
+                            </div>
+                            <div>
+                            <input type="text" name="" className='form-control tx_input' id={item.name} />
+                            </div>
                        </div>
                        </>
                     ))
                      : ''
                 }
-                {
-                    islabel ? 
-                    <div className='mb-3'>
-                         <label htmlFor="">Gas Fee (Optional)</label>
-                        <input type="text" name="" id=""  className='form-control' value={gas} onChange={(e)=>setGas(e.target.value)}/>
-                    </div>
-                    : ''
-                }
-                <button type="button" className='btn-grad' onClick={mintHandler}>Pre-Tx</button>
                 </div>
             </div>
         }
+         <div className='mb-3 d-flex justify-content-between align-items-center'>
+                         <div>
+                         <label htmlFor="">Gas Fee (Optional)</label>
+                         </div>
+                        <div>
+                        <input type="text" name="" id=""  className='form-control tx_input' value={gas} onChange={(e)=>setGas(e.target.value)}/>
+                        </div>
+        </div>
+                    <div className='mb-3 d-flex justify-content-between align-items-center'>
+                        <div>
+                            <label htmlFor="">Max Priority Fee Per Gas (Optional)</label>
+                        </div>
+                        <div>
+                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>setPriority(e.target.value)} />
+                        </div>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between align-items-center'>
+                         <div>
+                            <label htmlFor="">Max Fee Per Gas (Optional)</label>
+                         </div>
+                        <div>
+                            <input type="text" name="" id=""  className='form-control tx_input' value={maxFee} onChange={(e)=>setMaxFee(e.target.value)} />
+                        </div>
+                    </div>
+                    <div className='d-flex justify-content-end'>
+                    <button type="button" className='btn-grad' onClick={mintHandler}>Mint</button>
+                    </div>
     </div>
    </div>
     </>
