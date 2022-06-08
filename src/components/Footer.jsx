@@ -3,6 +3,9 @@ import React from 'react'
 const Footer = () => {
   return (
     <div className="footer">
+      <div>
+        FU-FRENS Minting Bot
+      </div>
         <div>
             <p>All Rights resevered to FU-FRENS</p>
         </div>

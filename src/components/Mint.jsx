@@ -18,7 +18,11 @@ const Mint = () => {
     const [cat, setCat] = useState([]);
     const [priority, setPriority] = useState("");
     const [maxFee, setMaxFee] = useState("");
+    const [getValue, setGetValue] = useState(0);
     const [getEstimation, setGetEstimation] = useState(false);
+    const [dollar, setDollar] = useState(0);
+    const [usd, setusd] = useState(0);
+    const [newpriority, setNewPriority] = useState(0);
 
     const collective = useSelector(state => state.collectiveReducer);
     const {account} = useSelector(state => state.connectReducer);
@@ -32,6 +36,14 @@ const Mint = () => {
                 if(getEstimation == true)
                 {
                     let num = parseInt(data.result,16)
+                    if(num != null)
+                    {
+                        const resp = await axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=ETH,USD,EUR');
+                        let rate = resp.data['USD'];
+                        setusd(rate);
+                        rate = 0.000000000000021*rate;
+                        setDollar(rate.toFixed(2))
+                    }
                     setPriority(num);
                     setMaxFee(num);
                     
@@ -115,13 +127,16 @@ const Mint = () => {
            {
                if(gas=="")
                {
-                const res = await contract.mint(Number(values[0]));
+                const res = await contract.mint(Number(values[0]),{
+                    value: ethers.utils.parseUnits(getValue.toString(), 'wei')
+                });
                 res.wait();
                }
                else 
                {
                 const res = await contract.mint(Number(values[0]),{
                     gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                    value: ethers.utils.parseUnits(getValue.toString(), 'wei')
                 });
                 res.wait();
                }
@@ -138,6 +153,7 @@ const Mint = () => {
                         const res = await contract.mint(values[0],Number(values[1]),{
                             maxFeePerGas: ethers.utils.parseUnits(maxFee.toString(), "wei"),
                             maxPriorityFeePerGas: ethers.utils.parseUnits(priority.toString(), "wei"),
+                            value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
                             gasLimit: 2000000,
                         });
                         res.wait();
@@ -160,6 +176,7 @@ const Mint = () => {
                         const res = await contract.mint(values[0],Number(values[1]),{
                             maxFeePerGas: ethers.utils.parseUnits(maxFee, "gwei"),
                             maxPriorityFeePerGas: ethers.utils.parseUnits(priority, "gwei"),
+                            value: ethers.utils.parseUnits(getValue, 'wei')
                             // gasLimit: 2000000,
                         });
                         res.wait();
@@ -215,6 +232,34 @@ const Mint = () => {
     {
         setOnFocus(true)
     }
+
+    const MaxHandler = (e) => 
+    {
+        setPriority(e.target.value)
+        let num = Number(toExpo(usd*(e.target.value/1e9)));
+        // setNewPriority(toExpo((e.target.value)));
+        console.log(toExpo((e.target.value)))
+        setDollar(num.toFixed(2))
+        
+    }
+
+    function toExpo(x) {
+        if (Math.abs(x) < 1.0) {
+          var e = parseInt(x.toString().split('e-')[1]);
+          if (e) {
+              x *= Math.pow(10,e-1);
+              x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+          }
+        } else {
+          var e = parseInt(x.toString().split('+')[1]);
+          if (e > 20) {
+              e -= 20;
+              x /= Math.pow(10,e);
+              x += (new Array(e+1)).join('0');
+          }
+        }
+        return x;
+      }
   
   return (
     <>
@@ -254,6 +299,16 @@ const Mint = () => {
             isOption && 
             <div className='row'>
                 <div className="col-md-12">
+                <div className='mb-3 d-flex justify-content-between align-items-center'>
+                         <div>
+                         <label htmlFor="">_value</label>
+                         </div>
+                        <div>
+                        <input type="text" name="" id=""  className='form-control tx_input' value={getValue} onChange={(e)=>setGetValue(e.target.value)} required/>
+                        </div>
+        </div>
+                </div>
+                <div className="col-md-12">
                 {
                     islabel ? islabel.map((item) =>(
                        <>
@@ -267,6 +322,7 @@ const Mint = () => {
                        </div>
                        </>
                     ))
+                    
                      : ''
                 }
                 </div>
@@ -282,15 +338,15 @@ const Mint = () => {
         </div>
                     <div className='mb-3 d-flex justify-content-between align-items-center'>
                         <div>
-                            <label htmlFor="">Max Priority Fee Per Gas (Optional)</label>
+                            <label htmlFor="">Max Priority Fee Per Gas (Optional) <br/> ({dollar} usd)</label>
                         </div>
                         <div>
-                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>setPriority(e.target.value)} />
+                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>MaxHandler(e)} />
                         </div>
                     </div>
                     <div className='mb-3 d-flex justify-content-between align-items-center'>
                          <div>
-                            <label htmlFor="">Max Fee Per Gas (Optional)</label>
+                            <label htmlFor="">Max Fee Per Gas (Optional) <br/> ({dollar} usd)</label>
                          </div>
                         <div>
                             <input type="text" name="" id=""  className='form-control tx_input' value={maxFee} onChange={(e)=>setMaxFee(e.target.value)} />
