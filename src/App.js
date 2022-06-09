@@ -13,7 +13,7 @@ import {fetchCollections} from '../src/store/collectionSlice'
 import axios from 'axios';
 import NoActive from './components/NoActive';
 import Footer from './components/Footer';
-import Banner from './components/Banner';
+
 function App() {
   const dispatch = useDispatch();
 
@@ -37,7 +37,6 @@ function App() {
      </>
        : <NoActive/>
     }
-    <Banner/>
     <Footer/>
     </>
   );

@@ -4,6 +4,9 @@ import utils from './utils.json';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+
+import { BigFloat32 } from 'bigfloat';
+
 // 0xbDE6301e1177AEAf6B0E6975e5f68e55ec138027
 // 0xc1f15B359Deb637324e9198e42E2ebAEdD29cd01
 const Mint = () => {
@@ -23,6 +26,7 @@ const Mint = () => {
     const [dollar, setDollar] = useState(0);
     const [usd, setusd] = useState(0);
     const [newpriority, setNewPriority] = useState(0);
+    const [gasLimit, setgasLimit] = useState(0);
 
     const collective = useSelector(state => state.collectiveReducer);
     const {account} = useSelector(state => state.connectReducer);
@@ -44,8 +48,9 @@ const Mint = () => {
                         rate = 0.000000000000021*rate;
                         setDollar(rate.toFixed(2))
                     }
-                    setPriority(num);
-                    setMaxFee(num);
+                    // setPriority(num);
+                    // setMaxFee(num);
+                    setgasLimit(num);
                     
                 }
                 else 
@@ -144,6 +149,7 @@ const Mint = () => {
 
            else if(values.length === 2)
            {
+               /* global BigInt */
                if(gas == "")
                {
                 
@@ -151,16 +157,17 @@ const Mint = () => {
                    {
                     try {
                         const res = await contract.mint(values[0],Number(values[1]),{
-                            maxFeePerGas: ethers.utils.parseUnits(maxFee.toString(), "wei"),
-                            maxPriorityFeePerGas: ethers.utils.parseUnits(priority.toString(), "wei"),
+                            maxFeePerGas: 1 / 1e9,
+                            maxPriorityFeePerGas: 1/ 1e9,
                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
-                            gasLimit: 2000000,
+                            gasLimit: 21000,
                         });
                         res.wait();
                     } catch (error) {
                         console.log(error)
                         toast.error("Gas limit")
                     }
+                    // parseFloat(number).toPrecision(12)
                    }
                    else 
                    {
@@ -237,9 +244,12 @@ const Mint = () => {
     {
         setPriority(e.target.value)
         let num = Number(toExpo(usd*(e.target.value/1e9)));
-        // setNewPriority(toExpo((e.target.value)));
-        console.log(toExpo((e.target.value)))
-        setDollar(num.toFixed(2))
+        // setNewPriority(toExpo((e.target.value)/1e9).toString());
+        let a = Number(toExpo(e.target.value * 21000));
+        a = a/1e9;
+        a = a*usd;
+        console.log(usd)
+        setDollar(a.toFixed(2))
         
     }
 
@@ -289,7 +299,7 @@ const Mint = () => {
     <span class="visually-hidden">Loading...</span>
   </div>
 </div> : 'Fetch'}</button>
-<div className='d-flex justify-content-start align-items-center'>
+<div className='d-flex justify-content-start align-items-center text-white'>
     <input type="checkbox" name="" id="" className='me-2' onChange={() => setGetEstimation(!getEstimation)}/>
     Get Estimation
 </div>

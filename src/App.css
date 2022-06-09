@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Luckiest+Guy&family=Montserrat:wght@700&family=Nosifer&family=Oswald:wght@400;600&family=Roboto:wght@100;300&family=Rubik+Glitch&display=swap');
 body{
    margin: 0;
+   /* background-color: #1F2605 !important; */
+   background: url('./asset/background.jpeg');
+   background-size: cover;
+   background-repeat: no-repeat;
+   background-position: top;
+   background-attachment: fixed;
+   backdrop-filter: blur(4px);
 }
 *{
     box-sizing: border-box;
@@ -108,7 +115,7 @@ body{
 {
   margin: 1vmax 25vmax;
   padding: 3vmax 2vmax;
-  border: 2px solid #8A2BE2;
+  border: 2px solid #45FD6E;
   border-radius: 0.7vmax;
   
 }
@@ -116,7 +123,7 @@ body{
 /* linear-gradient(to right, #DD5E89 0%, #F7BB97  51%, #DD5E89  100%);; */
 
 .btn-grad {
-  background-image: linear-gradient(to right, #8A2BE2 0%, rgb(255, 12, 126)  51%, #8A2BE2  100%);
+  background-image: linear-gradient(to right, #45FD6E 0%, #128d2d  51%, #45FD6E  100%);
   margin: 10px;
   padding: 15px 45px;
   text-align: center;
@@ -124,7 +131,7 @@ body{
   transition: 0.5s;
   background-size: 200% auto;
   color: white;            
-  box-shadow: 0 0 20px #eee;
+  /* box-shadow: 0 0 20px #eee; */
   border-radius: 10px;
   display: block;
   border: none !important;
@@ -142,8 +149,8 @@ body{
 .main_wrapper 
 {
     height: 40rem;
-    background-color: blueviolet; /* For browsers that do not support gradients */
-    background-image: linear-gradient(170deg, blueviolet 0%, blueviolet 60%, white 60.1%);
+    /* background-color: #25262A; For browsers that do not support gradients */
+    /* background-image: linear-gradient(170deg, #000000 0%, #000000 60%, #030303 60.1%); */
 }
 
 .main_wrapper > .nav 
@@ -156,21 +163,23 @@ body{
 
 .main_wrapper > .nav > .left > h1
 {
-    font-family: 'Oswald', cursive;
-    color: #eee;
+    /* font-family: 'Oswald', cursive; */
+    font-family: 'Nosifer', cursive;
+    color: #45FD6E;
 }
 
 .main_wrapper > .nav > .right > button 
 {
-    font-size: 30px;
+    font-size: 25px;
     padding-left: 20px;
     padding-right: 20px;
     border: 0;
     border-radius: 5px;
-    background-color: skyblue;
+    background-color: #45FD6E;
     font-family: 'Oswald', cursive;
     justify-content: center;
     text-align: center;
+    
 }
 
 .main_wrapper > .hero 
@@ -184,7 +193,7 @@ body{
 .no_active_wrapper 
 {
     font-family: 'Nosifer', cursive;
-    color: #8A2BE2;
+    color: #45FD6E;
     text-align: center; 
     font-size: 1.6vmax;
     margin-bottom: 3vmax;
@@ -193,17 +202,18 @@ body{
 .main_wrapper > .hero > .left > h1
 {
     font-family: 'Nosifer', cursive;
-    color: #eee;
+    color: #45FD6E;
 }
 
 .footer
 {
-    background-color: #8A2BE2;
+    background-color: transparent;
     padding: 0.5vmax 2vmax;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #eee;
+    border-top: 1px solid #45FD6E;
     /* margin-top: 5vmax; */
 }
 
@@ -228,7 +238,7 @@ body{
 
 .main_wrapper > .hero > .right > img 
 {
-    width: 500px;
+    width: 300px;
     height: auto;
     /* border: 2px solid white; */
 }
@@ -242,7 +252,7 @@ body{
 {
     font-family: 'Nosifer', cursive;
     text-align: center;
-    color: #8A2BE2;
+    color: #45FD6E;
     margin-bottom: 1vmax;
 }
 .sub__drop 
@@ -267,24 +277,27 @@ body{
 
 .show_hide > button 
 {
-    background-image: linear-gradient(to right, #8A2BE2 0%, rgb(255, 12, 126)  51%, #8A2BE2  100%);
+    /* background-image: linear-gradient(to right, #8A2BE2 0%, rgb(255, 12, 126)  51%, #8A2BE2  100%); */
+    background-color: transparent;
+    border: 2px solid #45FD6E;
   margin: 10px;
   padding: 15px 45px;
   text-align: center;
   text-transform: uppercase;
   transition: 0.5s;
   background-size: 200% auto;
-  color: white;            
-  box-shadow: 0 0 20px #eee;
+  color: #45FD6E;            
+  /* box-shadow: 0 0 20px #eee; */
   border-radius: 10px;
   display: block;
-  border: none !important;
+  /* border: none !important; */
   outline: none !important;
 }
 
 label 
 {
     font-size: 1vmax;
+    color: #eee;
 }
 
 .tx_input 
@@ -299,6 +312,10 @@ label
 }
 
 @media screen and (max-width: 830px) {
+    .footer
+    {
+        flex-direction: column;
+    }
     .main_wrapper 
     {
         height: 35rem;
@@ -340,7 +357,7 @@ label
     width: 100%;
     max-width: 100%;
     white-space: nowrap;
-    background-color: white;
+    background-color: #2D2E32;
 }
 
 .fl-table td, .fl-table th {
@@ -349,23 +366,24 @@ label
 }
 
 .fl-table td {
-    border-right: 1px solid #f8f8f8;
+    border-right: 1px solid #45FD6E;
     font-size: 12px;
+    color: #eee;
 }
 
 .fl-table thead th {
     color: #ffffff;
-    background: skyblue;
+    background: #45FD6E;
 }
 
 
 .fl-table thead th:nth-child(odd) {
     color: #ffffff;
-    background: #8A2BE2;
+    background: #45FD6E;
 }
 
 .fl-table tr:nth-child(even) {
-    background: #F8F8F8;
+    background: #1d1c1c;
 }
 
 /* Responsive */

@@ -15,7 +15,7 @@ const Navbar = () => {
     <div className="main_wrapper">
       <div className="nav">
         <div className="left">
-          <h1>FU-FRENS MINTING BOT</h1>
+          <h1>FU-FRENS</h1>
         </div>
         <div className="right">
           <button onClick={connectWallet}>{account.length > 0 ? 'Connected' : 'Connect Wallet'}</button>
