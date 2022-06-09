@@ -157,8 +157,8 @@ const Mint = () => {
                    {
                     try {
                         const res = await contract.mint(values[0],Number(values[1]),{
-                            maxFeePerGas: 1 / 1e9,
-                            maxPriorityFeePerGas: 1/ 1e9,
+                            maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                            maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
                             gasLimit: 21000,
                         });
@@ -249,6 +249,7 @@ const Mint = () => {
         a = a/1e9;
         a = a*usd;
         console.log(usd)
+        console.log(ethers.utils.parseEther('1.5').div(21000))
         setDollar(a.toFixed(2))
         
     }
