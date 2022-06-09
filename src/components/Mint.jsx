@@ -24,9 +24,12 @@ const Mint = () => {
     const [getValue, setGetValue] = useState(0);
     const [getEstimation, setGetEstimation] = useState(false);
     const [dollar, setDollar] = useState(0);
+    const [maxdollar, setMaxDollar] = useState(0);
     const [usd, setusd] = useState(0);
     const [newpriority, setNewPriority] = useState(0);
     const [gasLimit, setgasLimit] = useState(0);
+    const [perror, setPerror] = useState("");
+    const [merror, setMerror] = useState("");
 
     const collective = useSelector(state => state.collectiveReducer);
     const {account} = useSelector(state => state.connectReducer);
@@ -37,16 +40,26 @@ const Mint = () => {
             try {
                 const {data} = await axios.get(`https://api.etherscan.io/api?module=proxy&action=eth_estimateGas&to=${account}&apikey=SUTT68WDXUAYFWXMWXKJH39K122D6FWYVJ`);
                 console.log(data) 
+                const resp = await axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=ETH,USD,EUR');
+                let rate = resp.data['USD'];
+                setusd(rate);
                 if(getEstimation == true)
                 {
+                    setPriority('1.5')
+                    setMaxFee('1.5')
+                    let a = Number(toExpo(1.5 * 154277));
+                    a = a/1e9;
+                    a = a*usd;
+                    setDollar(a.toFixed(2))
+                    setMaxDollar(a.toFixed(2))
                     let num = parseInt(data.result,16)
                     if(num != null)
                     {
-                        const resp = await axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=ETH,USD,EUR');
-                        let rate = resp.data['USD'];
-                        setusd(rate);
-                        rate = 0.000000000000021*rate;
-                        setDollar(rate.toFixed(2))
+                        // const resp = await axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=ETH,USD,EUR');
+                        // let rate = resp.data['USD'];
+                        // setusd(rate);
+                        // rate = 0.000000000000021*rate;
+                        // setDollar(rate.toFixed(2))
                     }
                     // setPriority(num);
                     // setMaxFee(num);
@@ -119,6 +132,33 @@ const Mint = () => {
 
     const mintHandler = async() => 
     {
+        setPerror("");
+        setMerror("");
+        if(priority < 1.5)
+        {
+            setPerror("Priority fee should be greater than 1.5")
+            return
+        }
+        else if(maxFee < 1.5)
+        {
+            setMerror("Max fee should be greater than 1.5")
+            return
+        }
+        else if(priority > maxFee)
+        {
+            setPerror("Priority fee should be Less than Max Fee")
+            return
+        }
+        else if (priority > 3)
+        {
+            setPerror("Priority fee should be less than 3")
+            return
+        }
+        else if(maxFee > 3)
+        {
+            setMerror("Max fee should be less than 3")
+            return
+        }
         let values = [];
 
         Fields.map((item) => (
@@ -154,57 +194,85 @@ const Mint = () => {
                {
                 
                     if(maxFee != "" && priority != "")
+                    {
+                        try {
+                            const res = await contract.mint(values[0],Number(values[1]),{
+                                maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                                maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                                value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                                gasLimit: 154277,
+                            });
+                            res.wait();
+                        } catch (error) {
+                            console.log(error.code)
+                            if(error.code == 4001)
+                            {
+                                
+                            }
+                            // toast.error("Gas limit")
+                        }
+                    }
+                    else if(priority != "" && maxFee == "")
+                    {
+                        try {
+                            const res = await contract.mint(values[0],Number(values[1]),{
+                                maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                                value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                                gasLimit: 154277,
+                            });
+                            res.wait();
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }
+                    else if(maxFee != "" && priority == "")
+                    {
+                        try {
+                            const res = await contract.mint(values[0],Number(values[1]),{
+                                maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                                value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                                gasLimit: 154277,
+                            });
+                            res.wait();
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }
+                   else 
                    {
                     try {
-                        const res = await contract.mint(values[0],Number(values[1]),{
-                            maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
-                            maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
-                            value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
-                            gasLimit: 21000,
-                        });
+                        const res = await contract.mint(values[0],Number(values[1]));
                         res.wait();
                     } catch (error) {
                         console.log(error)
-                        toast.error("Gas limit")
                     }
-                    // parseFloat(number).toPrecision(12)
-                   }
-                   else 
-                   {
-                    const res = await contract.mint(values[0],Number(values[1]));
-                    res.wait();
                    }
                }
                else 
                {
-                   if(maxFee != "" && priority != "")
-                   {
+                if(priority != "" && maxFee != "" && gas != "")
+                {
                     try {
                         const res = await contract.mint(values[0],Number(values[1]),{
-                            maxFeePerGas: ethers.utils.parseUnits(maxFee, "gwei"),
-                            maxPriorityFeePerGas: ethers.utils.parseUnits(priority, "gwei"),
-                            value: ethers.utils.parseUnits(getValue, 'wei')
-                            // gasLimit: 2000000,
+                            gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
                         });
                         res.wait();
                     } catch (error) {
-                        toast.error("Gas limit")
+                        console.log(error)
                     }
-                   }
-                   else 
-                   {
+                }
+                else 
+                {
                         try {
                             const res = await contract.mint(values[0],Number(values[1]),{
                                 gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
                             });
                             res.wait();
                         } catch (error) {
-                            toast.error("Gas limit")
+                            console.log(error)
                         }
-                   }
-                    
-
-                    
+                }
+         
                }
            }
            else if (values.length === 3)
@@ -243,15 +311,20 @@ const Mint = () => {
     const MaxHandler = (e) => 
     {
         setPriority(e.target.value)
-        let num = Number(toExpo(usd*(e.target.value/1e9)));
-        // setNewPriority(toExpo((e.target.value)/1e9).toString());
-        let a = Number(toExpo(e.target.value * 21000));
+        let a = Number(toExpo(e.target.value * 154277));
         a = a/1e9;
         a = a*usd;
-        console.log(usd)
-        console.log(ethers.utils.parseEther('1.5').div(21000))
         setDollar(a.toFixed(2))
         
+    }
+
+    const MaxFeeHandler = (e) => 
+    {
+        setMaxFee(e.target.value);
+        let a = Number(toExpo(e.target.value * 154277));
+        a = a/1e9;
+        a = a*usd;
+        setMaxDollar(a.toFixed(2))
     }
 
     function toExpo(x) {
@@ -339,7 +412,26 @@ const Mint = () => {
                 </div>
             </div>
         }
-         <div className='mb-3 d-flex justify-content-between align-items-center'>
+         
+                    <div className='mb-3 d-flex justify-content-between align-items-center'>
+                        <div>
+                            <label htmlFor="">Priority Fee (gwei) <br/> ({dollar} usd)</label>
+                        </div>
+                        <div>
+                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>MaxHandler(e)} />
+                            <p className='text-danger error'>{perror ? perror : ''}</p>
+                        </div>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between align-items-center'>
+                         <div>
+                            <label htmlFor="">Max Fee (gwei) <br/> ({maxdollar} usd)</label>
+                         </div>
+                        <div>
+                            <input type="text" name="" id=""  className='form-control tx_input' value={maxFee} onChange={(e)=>MaxFeeHandler(e)} />
+                            <p className='text-danger error'>{merror ? merror : ''}</p>
+                        </div>
+                    </div>
+                    <div className='mb-3 d-flex justify-content-between align-items-center'>
                          <div>
                          <label htmlFor="">Gas Fee (Optional)</label>
                          </div>
@@ -347,22 +439,6 @@ const Mint = () => {
                         <input type="text" name="" id=""  className='form-control tx_input' value={gas} onChange={(e)=>setGas(e.target.value)}/>
                         </div>
         </div>
-                    <div className='mb-3 d-flex justify-content-between align-items-center'>
-                        <div>
-                            <label htmlFor="">Max Priority Fee Per Gas (Optional) <br/> ({dollar} usd)</label>
-                        </div>
-                        <div>
-                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>MaxHandler(e)} />
-                        </div>
-                    </div>
-                    <div className='mb-3 d-flex justify-content-between align-items-center'>
-                         <div>
-                            <label htmlFor="">Max Fee Per Gas (Optional) <br/> ({dollar} usd)</label>
-                         </div>
-                        <div>
-                            <input type="text" name="" id=""  className='form-control tx_input' value={maxFee} onChange={(e)=>setMaxFee(e.target.value)} />
-                        </div>
-                    </div>
                     <div className='d-flex justify-content-end'>
                     <button type="button" className='btn-grad' onClick={mintHandler}>Mint</button>
                     </div>

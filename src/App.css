@@ -386,6 +386,11 @@ label
     background: #1d1c1c;
 }
 
+.error 
+{
+    font-size: 1vmax;
+}
+
 /* Responsive */
 
 @media (max-width: 767px) {
