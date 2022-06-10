@@ -33,6 +33,8 @@ const Mint = () => {
     const [collectionName, setCollectionName] = useState("");
     const [loader, setLoader] = useState(false);
     const [flag, setFlag] = useState("");
+    const [preSaleflag, setPreFlag] = useState(false);
+    const [getpreSale, setGetPreSale] = useState(true);
 
     const collective = useSelector(state => state.collectiveReducer);
     const {account} = useSelector(state => state.connectReducer);
@@ -85,6 +87,7 @@ const Mint = () => {
     const submitHandler = async () => 
     {
         setFlag("");
+        setPreFlag(false)
         try {
             setChange(true);
             const {data} = await axios.get(`https://api-rinkeby.etherscan.io/api?module=contract&action=getsourcecode&address=${address}&apikey=YourApiKeyToken`);
@@ -108,6 +111,10 @@ const Mint = () => {
                         setfields(Fields => [...Fields, fields['name']])
                     }
                 }
+                if(item.name == 'preSale')
+                {
+                    setPreFlag(true);
+                }
             }
             
             if(window.ethereum)
@@ -123,6 +130,9 @@ const Mint = () => {
                 setContract(contract)
 
                 setIsOption(true)
+
+                const resp = await contract.preSale();
+                setGetPreSale(resp);
 
                 setChange(false)
 
@@ -187,26 +197,182 @@ const Mint = () => {
             values.push(document.getElementById(item).value)
         ))
 
-        console.log(values)
+        var numbers = /^[0-9]+$/;
+
+        console.log(values[0].match(numbers))
+
+        let num1, num2, num3;
+
+        if(values.length === 1)
+        {
+            if(values[0].match(numbers) != null)
+            {
+                num1 = Number(values[0])
+            }
+            else 
+            {
+                num1 = values[0];
+            }
+        }
+
+        if(values.length === 2)
+        {
+            if(values[0].match(numbers) != null)
+            {
+                num1 = Number(values[0])
+            }
+            else 
+            {
+                num1 = values[0]
+            }
+
+            if(values[1].match(numbers) != null)
+            {
+                num2 = Number(values[1])
+            }
+            else 
+            {
+                num2 = values[1]
+            }
+        }
+
+        if(values.length === 3)
+        {
+            if(values[0].match(numbers) != null)
+            {
+                num1 = Number(values[0])
+            }
+            else 
+            {
+                num1 = values[0]
+            }
+
+            if(values[1].match(numbers) != null)
+            {
+                num2 = Number(values[1])
+            }
+            else 
+            {
+                num2 = values[1]
+            }
+
+            if(values[2].match(numbers) != null)
+            {
+                num3 = Number(values[2])
+            }
+            else 
+            {
+                num3 = values[2]
+            }
+
+            
+        }
 
         try {
            if(values.length === 1)
            {
-               if(gas=="")
-               {
-                const res = await contract.mint(Number(values[0]),{
-                    value: ethers.utils.parseUnits(getValue.toString(), 'wei')
-                });
-                res.wait();
-               }
-               else 
-               {
-                const res = await contract.mint(Number(values[0]),{
-                    gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-                    value: ethers.utils.parseUnits(getValue.toString(), 'wei')
-                });
-                res.wait();
-               }
+            if(gas == "")
+            {
+             
+                 if(maxFee != "" && priority != "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,{
+                             maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                             maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(false);
+                         if(error.code == 4001)
+                         {
+                             
+                         }
+                         // toast.error("Gas limit")
+                     }
+                 }
+                 else if(priority != "" && maxFee == "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,{
+                             maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(false);
+                     }
+                 }
+                 else if(maxFee != "" && priority == "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,{
+                             maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(true);
+                     }
+                 }
+                else 
+                {
+                 setLoader(true);
+                 try {
+                     const res = await contract.mint(num1);
+                     res.wait();
+                     setLoader(false);
+                 } catch (error) {
+                     console.log(error)
+                     setLoader(false);
+                 }
+                }
+            }
+            else 
+            {
+             if(priority != "" && maxFee != "" && gas != "")
+             {
+                 setLoader(true);
+                 try {
+                     const res = await contract.mint(num1,{
+                         gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                     });
+                     res.wait();
+                     setLoader(false);
+                 } catch (error) {
+                     console.log(error)
+                     setLoader(false);
+                 }
+             }
+             else 
+             {
+                 setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,{
+                             gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(false);
+                     }
+             }
+      
+            }
            }
 
            else if(values.length === 2)
@@ -219,7 +385,7 @@ const Mint = () => {
                     {
                         setLoader(true);
                         try {
-                            const res = await contract.mint(values[0],Number(values[1]),{
+                            const res = await contract.mint(num1,num2,{
                                 maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
                                 maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
                                 value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
@@ -241,7 +407,7 @@ const Mint = () => {
                     {
                         setLoader(true);
                         try {
-                            const res = await contract.mint(values[0],Number(values[1]),{
+                            const res = await contract.mint(num1,num2,{
                                 maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
                                 value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
                                 gasLimit: 154277,
@@ -257,7 +423,7 @@ const Mint = () => {
                     {
                         setLoader(true);
                         try {
-                            const res = await contract.mint(values[0],Number(values[1]),{
+                            const res = await contract.mint(num1,num2,{
                                 maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
                                 value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
                                 gasLimit: 154277,
@@ -273,7 +439,7 @@ const Mint = () => {
                    {
                     setLoader(true);
                     try {
-                        const res = await contract.mint(values[0],Number(values[1]));
+                        const res = await contract.mint(num1,num2);
                         res.wait();
                         setLoader(false);
                     } catch (error) {
@@ -288,7 +454,7 @@ const Mint = () => {
                 {
                     setLoader(true);
                     try {
-                        const res = await contract.mint(values[0],Number(values[1]),{
+                        const res = await contract.mint(num1,num2,{
                             gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
                         });
                         res.wait();
@@ -302,7 +468,7 @@ const Mint = () => {
                 {
                     setLoader(true);
                         try {
-                            const res = await contract.mint(values[0],Number(values[1]),{
+                            const res = await contract.mint(num1,num2,{
                                 gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
                             });
                             res.wait();
@@ -317,20 +483,108 @@ const Mint = () => {
            }
            else if (values.length === 3)
            {
-               if(gas== "")
-               {
-                const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])));
-                res.wait();
-               }
-               else 
-               {
-                const res = await contract.mint(Number(values[0]),Number(values[1],Number(values[2])),{
-                    gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
-                    maxFeePerGas: ethers.utils.parseUnits(maxFee, "gwei"),
-                    maxPriorityFeePerGas: ethers.utils.parseUnits(priority, "gwei")
-                });
-                res.wait();
-               }
+            if(gas == "")
+            {
+             
+                 if(maxFee != "" && priority != "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,num2,num3,{
+                             maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                             maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error.code)
+                         setLoader(false);
+                         if(error.code == 4001)
+                         {
+                             
+                         }
+                         // toast.error("Gas limit")
+                     }
+                 }
+                 else if(priority != "" && maxFee == "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,num2,num3,{
+                             maxPriorityFeePerGas: ethers.utils.parseEther(priority).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(false);
+                     }
+                 }
+                 else if(maxFee != "" && priority == "")
+                 {
+                     setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,num2,num3,{
+                             maxFeePerGas: ethers.utils.parseEther(maxFee).div(1e9),
+                             value: ethers.utils.parseUnits(getValue.toString(), 'wei'),
+                             gasLimit: 154277,
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(true);
+                     }
+                 }
+                else 
+                {
+                 setLoader(true);
+                 try {
+                     const res = await contract.mint(num1,num2,num3);
+                     res.wait();
+                     setLoader(false);
+                 } catch (error) {
+                     console.log(error)
+                     setLoader(false);
+                 }
+                }
+            }
+            else 
+            {
+             if(priority != "" && maxFee != "" && gas != "")
+             {
+                 setLoader(true);
+                 try {
+                     const res = await contract.mint(num1,num2,num3,{
+                         gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                     });
+                     res.wait();
+                     setLoader(false);
+                 } catch (error) {
+                     console.log(error)
+                     setLoader(false);
+                 }
+             }
+             else 
+             {
+                 setLoader(true);
+                     try {
+                         const res = await contract.mint(num1,num2,num3,{
+                             gasPrice: ethers.utils.parseUnits(gas, 'gwei'),
+                         });
+                         res.wait();
+                         setLoader(false);
+                     } catch (error) {
+                         console.log(error)
+                         setLoader(false);
+                     }
+             }
+      
+            }
             
            }
 
@@ -384,6 +638,20 @@ const Mint = () => {
         }
         return x;
       }
+
+    //   const PreSaleHandler = async (e) => 
+    //   {
+    //       if(e.target.checked == true)
+    //       {
+    //           const resp = await contract.preSale();
+    //           setGetPreSale(resp);
+    //           console.log(resp)
+    //       }
+    //       else 
+    //       {
+    //         setGetPreSale(true);
+    //       }
+    //   }
  
   
   return (
@@ -392,8 +660,6 @@ const Mint = () => {
    <div className='bx_container'>
         <div className='mb-3'>
             <label htmlFor="" class="form-label">Contract Address: {address ? <a href={`https://rinkeby.etherscan.io/address/${address}`} target='_blank' className='text-white'>{address}</a> : ''}</label>
-            <p className='text-white'>{collectionName ? `Collection Name:  ${collectionName}` : ''}</p>
-            <p className='text-white'>{flag ? `Flag: ${flag}` : ''}</p>
             <input type="text" className='form-control' onClick={onType} name="" id="" value={address} onChange={(e) => setAddress(e.target.value)}/>
            {
                collective.length != 0 && onfocus == true? 
@@ -416,6 +682,11 @@ const Mint = () => {
     <span class="visually-hidden">Loading...</span>
   </div>
 </div> : 'Fetch'}</button>
+{collectionName ? <p className='text-white'>Collection Name:  {collectionName}</p> : ''}
+{flag ? <p className='text-white'>Flag:{flag}</p> : ''}
+{
+    preSaleflag == true ? <p className='text-white'>PreSale: {getpreSale == true ? 'ON' : 'OFF'}</p> : ''
+}
 <div className='d-flex justify-content-start align-items-center text-white'>
     <input type="checkbox" name="" id="" className='me-2' onChange={() => setGetEstimation(!getEstimation)}/>
     Get Estimation
