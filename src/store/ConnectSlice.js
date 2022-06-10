@@ -20,6 +20,9 @@ const connectSlice = createSlice({
         setAccount(state, action) {
             state.account = action.payload;
         },
+        setDisConnect(state, action) {
+            state.account = "";
+        },
         setIsActive(state, action) {
             state.isActive = action.payload;
         },
@@ -29,7 +32,7 @@ const connectSlice = createSlice({
     },
 });
 
-export const { setAccount, setStatus, setIsActive} = connectSlice.actions;
+export const { setAccount, setStatus, setIsActive, setDisConnect} = connectSlice.actions;
 export default connectSlice.reducer;
 
 export function fetchUser() {

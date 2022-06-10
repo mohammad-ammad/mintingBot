@@ -1,15 +1,22 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import bot from '../asset/bot.png';
-import { fetchUser } from '../store/ConnectSlice';
+import { fetchUser, setAccount, setDisConnect, setIsActive } from '../store/ConnectSlice';
 const Navbar = () => {
   
   const dispatch = useDispatch()
-  const {account} = useSelector(state => state.connectReducer);
+  const {account, status} = useSelector(state => state.connectReducer);
   const connectWallet = async() => 
   {
     dispatch(fetchUser());
   }
+
+  window.ethereum.on('accountsChanged', function (accounts) {
+    dispatch(setIsActive(false))
+    dispatch(fetchUser());
+  })
+
+  
   return (
     <>
     <div className="main_wrapper">

@@ -108,11 +108,11 @@ const Collections = () => {
   return (
     <div className="collection_wrapper">
         <div>
-            <h1>Latest Collection</h1>
+            <h1>Latest Collections</h1>
             <div className='show_hide'>
                 {
-                    show == true ? <button onClick={() => setShow(false)}>Hide Collection</button> : 
-                    <button onClick={() => setShow(true)}>Show Collection</button>
+                    show == true ? <button onClick={() => setShow(false)}>Hide Collections</button> : 
+                    <button onClick={() => setShow(true)}>Show Collections</button>
                 }
             </div>
         </div>
