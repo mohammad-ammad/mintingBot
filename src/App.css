@@ -463,7 +463,7 @@ label
     }
     .fl-table thead th {
         text-align: left;
-        border-bottom: 1px solid #f7f7f9;
+        border-bottom: 1px solid #128d2d;
     }
     .fl-table tbody tr {
         display: table-cell;
@@ -475,15 +475,18 @@ label
         background: transparent;
     }
     .fl-table tr td:nth-child(odd) {
-        background: #F8F8F8;
-        border-right: 1px solid #E6E4E4;
+        background: #1d1c1c;
+        border-right: 1px solid #128d2d;
     }
     .fl-table tr td:nth-child(even) {
-        border-right: 1px solid #E6E4E4;
+        border-right: 1px solid #128d2d;
     }
     .fl-table tbody td {
         display: block;
         text-align: center;
+    }
+    .collection_wrapper {
+        padding: 2vmax 2vmax;
     }
 }
 

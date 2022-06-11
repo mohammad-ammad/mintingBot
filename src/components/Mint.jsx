@@ -35,6 +35,7 @@ const Mint = () => {
     const [flag, setFlag] = useState("");
     const [preSaleflag, setPreFlag] = useState(false);
     const [getpreSale, setGetPreSale] = useState(true);
+    const [permission, setPermission] = useState(false);
 
     const collective = useSelector(state => state.collectiveReducer);
     const {account} = useSelector(state => state.connectReducer);
@@ -88,6 +89,7 @@ const Mint = () => {
     {
         setFlag("");
         setPreFlag(false)
+        setPermission(false)
         try {
             setChange(true);
             const {data} = await axios.get(`https://api-rinkeby.etherscan.io/api?module=contract&action=getsourcecode&address=${address}&apikey=YourApiKeyToken`);
@@ -95,7 +97,7 @@ const Mint = () => {
 
             if(data['result'][0]['ABI'] == "Contract source code not verified")
             {
-                setFlag("Not Verified");
+                setFlag("Not Mintable");
                 setChange(false)
                 return
             }
@@ -111,6 +113,7 @@ const Mint = () => {
                         setfields(Fields => [...Fields, fields['name']])
                     }
                 }
+                
                 if(item.name == 'preSale')
                 {
                     setPreFlag(true);
@@ -639,20 +642,7 @@ const Mint = () => {
         return x;
       }
 
-    //   const PreSaleHandler = async (e) => 
-    //   {
-    //       if(e.target.checked == true)
-    //       {
-    //           const resp = await contract.preSale();
-    //           setGetPreSale(resp);
-    //           console.log(resp)
-    //       }
-    //       else 
-    //       {
-    //         setGetPreSale(true);
-    //       }
-    //   }
- 
+    
   
   return (
     <>
@@ -682,10 +672,11 @@ const Mint = () => {
     <span class="visually-hidden">Loading...</span>
   </div>
 </div> : 'Fetch'}</button>
-{collectionName ? <p className='text-white'>Collection Name:  {collectionName}</p> : ''}
-{flag ? <p className='text-white'>Flag:{flag}</p> : ''}
+{permission == true ? <p className='text-white'>Access denied</p> : ''}
+{collectionName ?<div className='text-white d-flex justify-content-between'><p>Collection Name:</p> <p>{collectionName}</p> </div> : ''}
+{flag ? <div className='text-white d-flex justify-content-between'><p>Flag:</p><p>{flag}</p></div> : ''}
 {
-    preSaleflag == true ? <p className='text-white'>PreSale: {getpreSale == true ? 'ON' : 'OFF'}</p> : ''
+    preSaleflag == true ? <div className='text-white d-flex justify-content-between'> <p>PreSale:</p> <p>{getpreSale == true ? 'ON' : 'OFF'}</p> </div>: ''
 }
 <div className='d-flex justify-content-start align-items-center text-white'>
     <input type="checkbox" name="" id="" className='me-2' onChange={() => setGetEstimation(!getEstimation)}/>
@@ -699,7 +690,7 @@ const Mint = () => {
                 <div className="col-md-12">
                 <div className='mb-3 d-flex justify-content-between align-items-center'>
                          <div>
-                         <label htmlFor="">_value</label>
+                         <label htmlFor="">_value (wei)</label>
                          </div>
                         <div>
                         <input type="text" name="" id=""  className='form-control tx_input' value={getValue} onChange={(e)=>setGetValue(e.target.value)} required/>
