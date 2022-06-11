@@ -32,8 +32,7 @@ const Navbar = () => {
         <div className="left">
           <h1>FU-FRENS MINTING BOT</h1>
           <p>
-            This bot is useful to mint NFT among so many people in public sale.<br/>
-            Every NFT has their own active mint function or start mint block number or start mint timestamp
+          The F U Frens Mint Bot is a powerful contract minting bot that gives our members the edge during popular mints
           </p>
         </div>
         <div className="right">

@@ -8,7 +8,7 @@ const NoActive = () => {
         Subscribe Our Nft to Claim Access
     </div>
     <a href="" className='a_btn'>
-    Subscribe
+    Connect to Wallet
     </a>
     </div>
     </>

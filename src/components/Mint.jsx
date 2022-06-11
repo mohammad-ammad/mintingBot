@@ -202,7 +202,7 @@ const Mint = () => {
 
         var numbers = /^[0-9]+$/;
 
-        console.log(values[0].match(numbers))
+        // console.log(values[0])
 
         let num1, num2, num3;
 
@@ -671,7 +671,7 @@ const Mint = () => {
   <div class="spinner-border" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>
-</div> : 'Fetch'}</button>
+</div> : 'Search'}</button>
 {permission == true ? <p className='text-white'>Access denied</p> : ''}
 {collectionName ?<div className='text-white d-flex justify-content-between'><p>Collection Name:</p> <p>{collectionName}</p> </div> : ''}
 {flag ? <div className='text-white d-flex justify-content-between'><p>Flag:</p><p>{flag}</p></div> : ''}
@@ -690,7 +690,7 @@ const Mint = () => {
                 <div className="col-md-12">
                 <div className='mb-3 d-flex justify-content-between align-items-center'>
                          <div>
-                         <label htmlFor="">_value (wei)</label>
+                         <label htmlFor="">_value (eth)</label>
                          </div>
                         <div>
                         <input type="text" name="" id=""  className='form-control tx_input' value={getValue} onChange={(e)=>setGetValue(e.target.value)} required/>
@@ -702,12 +702,22 @@ const Mint = () => {
                     islabel ? islabel.map((item) =>(
                        <>
                        <div className="mb-3 d-flex justify-content-between align-items-center">
-                            <div>
+                        {item.name == '_to'
+                        ? 
+                        <div>
+                            <input type="hidden" name="" className='form-control tx_input' value={account} id={item.name} />
+                        </div>
+                        :
+                        <>
+                        <div>
                             <label htmlFor="">{item.name} ({item.type})</label> 
                             </div>
                             <div>
-                            <input type="text" name="" className='form-control tx_input' id={item.name} />
-                            </div>
+                            <input type="text" name="" className='form-control tx_input' placeholder={`${item.name} : ${item.type}`} id={item.name} />
+                        </div>
+                        </>
+                        }
+                            
                        </div>
                        </>
                     ))
@@ -718,12 +728,12 @@ const Mint = () => {
             </div>
         }
          
-                    <div className='mb-3 d-flex justify-content-between align-items-center'>
+                    <div className='mt-3 mb-3 d-flex justify-content-between align-items-center'>
                         <div>
                             <label htmlFor="">Priority Fee (gwei) <br/> ({dollar} usd)</label>
                         </div>
                         <div>
-                            <input type="text" name="" id=""  className='form-control tx_input' value={priority} onChange={(e)=>MaxHandler(e)} />
+                            <input type="text" name="" id="" placeholder='priority Fee : gwei'  className='form-control tx_input' value={priority} onChange={(e)=>MaxHandler(e)} />
                             <p className='text-danger error'>{perror ? perror : ''}</p>
                         </div>
                     </div>
@@ -732,7 +742,7 @@ const Mint = () => {
                             <label htmlFor="">Max Fee (gwei) <br/> ({maxdollar} usd)</label>
                          </div>
                         <div>
-                            <input type="text" name="" id=""  className='form-control tx_input' value={maxFee} onChange={(e)=>MaxFeeHandler(e)} />
+                            <input type="text" name="" id="" placeholder='max Fee : gwei'  className='form-control tx_input' value={maxFee} onChange={(e)=>MaxFeeHandler(e)} />
                             <p className='text-danger error'>{merror ? merror : ''}</p>
                         </div>
                     </div>
@@ -741,11 +751,11 @@ const Mint = () => {
                          <label htmlFor="">Gas Fee (Optional)</label>
                          </div>
                         <div>
-                        <input type="text" name="" id=""  className='form-control tx_input' value={gas} onChange={(e)=>setGas(e.target.value)}/>
+                        <input type="text" name="" id="" placeholder='gas Fee : unit'  className='form-control tx_input' value={gas} onChange={(e)=>setGas(e.target.value)}/>
                         </div>
         </div>
-                    <div className='d-flex justify-content-end'>
-                    <button type="button" className='btn-grad' onClick={mintHandler}>{loader == true ? <div class="d-flex justify-content-center">
+                    <div className='d-flex justify-content-center'>
+                    <button type="button" className='btn-grad mint_btn' onClick={mintHandler}>{loader == true ? <div class="d-flex justify-content-center">
   <div class="spinner-border" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>

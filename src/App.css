@@ -327,8 +327,14 @@ body{
 
 label 
 {
-    font-size: 1vmax;
+    font-size: 1.1vmax;
     color: #eee;
+}
+
+.mint_btn
+{
+    padding-left: 12vmax;
+    padding-right: 12vmax;
 }
 
 .tx_input 
